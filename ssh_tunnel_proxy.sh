@@ -29,21 +29,14 @@ foreach opt $options {
 
 # Check if a valid option was selected
 if {$selected_option eq {}} {
-    set valid_options ""
-    foreach opt $options {
-        lappend valid_options [lindex $opt 0]
-    }
+    set valid_options [lmap opt $options { lindex $opt 0 }]
     set valid_options_str [join $valid_options ", "]
     puts "Invalid option. Please choose one of the following options: $valid_options_str."
     exit 1
 }
 
-set option_num [lindex $selected_option 0]
-set country [lindex $selected_option 1]
-set ip_address [lindex $selected_option 2]
-set username [lindex $selected_option 3]
-set password [lindex $selected_option 4]
-set port [lindex $selected_option 5]
+# Extract option details
+lassign $selected_option option_num country ip_address username password port
 
 # Run the SSH command based on the user's choice
 spawn ssh -f -N -M -S /tmp/sshtunnel -D 1088 -p $port $username@$ip_address
@@ -58,5 +51,7 @@ expect {
         send "$password\r"
         exp_continue
     }
-    eof
+    eof {
+        puts "SSH connection closed"
+    }
 }
