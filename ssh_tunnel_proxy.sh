@@ -1,11 +1,26 @@
 #!/usr/bin/expect
 
+# Set the log file path
+set log_file_path "/path/to/your/log/file.log"
+
 # Define options and their corresponding values
 set options {
     {1 UnitedStates 111.111.111.111 USER1 PASSWORD1 22}
     {2 Netherland 222.222.222.222 USER2 PASSWORD2 2222}
     {3 Germany 333.333.333.333 USER3 PASSWORD3 3333}
     {4 Russia 444.444.444.444 USER4 PASSWORD4 4444}
+}
+
+# Function to log messages
+proc log_message {message} {
+    global log_file_path
+    set timestamp [timestamp -format {%Y-%m-%d %H:%M:%S}]
+    set log_entry "$timestamp: $message"
+    puts $log_entry
+    # Append the log entry to the log file
+    set log_file [open $log_file_path a]
+    puts $log_file $log_entry
+    close $log_file
 }
 
 # Prompt the user to choose an option
