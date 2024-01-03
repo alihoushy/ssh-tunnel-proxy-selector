@@ -23,6 +23,12 @@ proc log_message {message} {
     close $log_file
 }
 
+# Function to close the SSH connection
+proc close_ssh_connection {ip_address port} {
+    log_message "Closing SSH connection to $ip_address:$port"
+    exec ssh -S /tmp/sshtunnel -O exit $ip_address -p $port
+}
+
 # Prompt the user to choose an option
 puts "Please select an option:"
 foreach option $options {
@@ -69,4 +75,12 @@ expect {
     eof {
         puts "SSH connection closed"
     }
+
+    # Wait for user input to close the SSH connection
+    puts "Press Enter to close the SSH connection..."
+    gets stdin
+    close_ssh_connection $ip_address $port
+
+    log_message "Script exited!"
+    exit
 }
